@@ -1,0 +1,128 @@
+# Z2RUXB3Y-<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>𓆩 𝙕2𝙍𝙐𝙓.𝘽3𝙔𓆪 AI</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{background:#0f0f0f;color:#fff}
+.hero{text-align:center;padding:100px 20px;}
+.hero h1{color:#00ffe0;font-size:32px;margin-bottom:15px;}
+.hero p{color:#ccc;}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;padding:40px;max-width:1000px;margin:auto;}
+.feature{background:#1c1c1c;padding:30px;border-radius:15px;text-align:center;cursor:pointer;transition:.3s;}
+.feature:hover{background:#2a2a2a;transform:translateY(-5px);}
+.feature h3{color:#00ffe0;margin-bottom:10px;}
+.module{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#111;flex-direction:column;padding:20px;z-index:100;}
+.module-header{margin-bottom:15px;}
+.back-btn{background:#00ffe0;color:#000;padding:8px 15px;border:none;border-radius:8px;cursor:pointer;}
+.module-box{flex:1;background:#1c1c1c;padding:15px;border-radius:10px;overflow:auto;margin-bottom:10px;}
+.input-area{display:flex;gap:10px;}
+.input-area input{flex:1;padding:10px;border-radius:8px;border:none;}
+.input-area button{padding:10px 20px;border:none;border-radius:8px;background:#00ffe0;cursor:pointer;}
+.message{margin:10px 0;padding:10px;border-radius:8px;}
+.user{background:#00ffe0;color:#000;text-align:right;}
+.bot{background:#222;color:#fff;text-align:left;}
+.footer{background:#000;padding:40px 20px;text-align:center;margin-top:60px;}
+.footer h2{color:#00ffe0;margin-bottom:20px;}
+.social-buttons{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;}
+.social-buttons a{background:#1c1c1c;padding:12px 25px;border-radius:30px;text-decoration:none;color:#00ffe0;transition:.3s;}
+.social-buttons a:hover{background:#00ffe0;color:#000;}
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+<h1>𓆩 𝙕2𝙍𝙐𝙓.𝘽3𝙔𓆪 AI</h1>
+<p>Yapay Zeka Platformuna Hoş Geldin</p>
+</div>
+
+<div class="features">
+<div class="feature" onclick="openModule('chat')"><h3>AI Sohbet</h3><p>Gerçek zamanlı yapay zeka konuşması</p></div>
+<div class="feature" onclick="openModule('visual')"><h3>Görsel Üretimi</h3><p>Metinden görsel oluştur</p></div>
+<div class="feature" onclick="openModule('code')"><h3>Kod Yardımcısı</h3><p>Kod üret ve düzenle</p></div>
+<div class="feature" onclick="openModule('data')"><h3>Veri Analizi</h3><p>Verileri analiz et</p></div>
+</div>
+
+<!-- MODÜLLER -->
+<div id="chat" class="module">
+<div class="module-header"><button class="back-btn" onclick="closeModule()">← Geri</button></div>
+<div class="module-box" id="chatBox"></div>
+<div class="input-area">
+<input type="text" id="chatInput" placeholder="Mesaj yaz">
+<button onclick="sendMessage('chat')">Gönder</button>
+</div>
+</div>
+
+<div id="visual" class="module">
+<div class="module-header"><button class="back-btn" onclick="closeModule()">← Geri</button></div>
+<div class="module-box" id="visualBox"></div>
+<div class="input-area">
+<input type="text" id="visualInput" placeholder="Görsel açıklaması yaz">
+<button onclick="sendMessage('visual')">Oluştur</button>
+</div>
+</div>
+
+<div id="code" class="module">
+<div class="module-header"><button class="back-btn" onclick="closeModule()">← Geri</button></div>
+<div class="module-box" id="codeBox"></div>
+<div class="input-area">
+<input type="text" id="codeInput" placeholder="Kod isteği yaz">
+<button onclick="sendMessage('code')">Çalıştır</button>
+</div>
+</div>
+
+<div id="data" class="module">
+<div class="module-header"><button class="back-btn" onclick="closeModule()">← Geri</button></div>
+<div class="module-box" id="dataBox"></div>
+<div class="input-area">
+<input type="text" id="dataInput" placeholder="Veri isteği yaz">
+<button onclick="sendMessage('data')">Analiz Et</button>
+</div>
+</div>
+
+<!-- FOOTER (STATİK) -->
+<div class="footer">
+<h2>İletişim</h2>
+<div class="social-buttons">
+  <a href="https://wa.me/905123456789" target="_blank">WhatsApp</a>
+  <a href="https://instagram.com/z2rux" target="_blank">Instagram</a>
+  <a href="https://www.tiktok.com/@z2rux.b3y" target="_blank">TikTok</a>
+</div>
+</div>
+
+<script>
+const backendUrl = "https://WORKER-LINK"; // <-- Buraya kendi Cloudflare Worker linkin
+
+function openModule(id){document.getElementById(id).style.display="flex";}
+function closeModule(){document.querySelectorAll(".module").forEach(m=>m.style.display="none");}
+
+async function sendMessage(module){
+let input=document.getElementById(module+"Input");
+let text=input.value.trim();
+if(!text) return;
+let box=document.getElementById(module+"Box");
+box.innerHTML += `<div class="message user">${text}</div>`;
+input.value="";
+try{
+let modeMap = {chat:"chat", visual:"image", code:"code", data:"data"};
+const res = await fetch(`${backendUrl}/chat`,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({message:text, mode:modeMap[module]})
+});
+const data = await res.json();
+box.innerHTML += `<div class="message bot">${data.reply}</div>`;
+box.scrollTop = box.scrollHeight;
+}catch(e){
+box.innerHTML += `<div class="message bot">AI şu an cevap veremiyor.</div>`;
+box.scrollTop = box.scrollHeight;
+}
+}
+</script>
+
+</body>
+</html>
